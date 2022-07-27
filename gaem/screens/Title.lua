@@ -6,12 +6,12 @@ function Title:enter()
 end
 
 function Title:render()
-    love.graphics.print('press enter to play or esc to quit', 0, 0)
+    love.graphics.print('press enter or A to play or esc to quit', 0, 0)
 end
 
 function Title:update(dt)
-    -- enter takes you to the play screen
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+    -- enter or a takes you to the play screen
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') or Joystick:isDown(1) then
         Screen:change('Play')
     end
 

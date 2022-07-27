@@ -36,7 +36,14 @@ function Play:update(dt)
         Player.dx = Player.dx + 1
     end
 
-    if love.keyboard.isDown('space') then
+    -- left stick controls
+    lx, ly = Joystick:getAxes()
+    Player.dx = Player.dx + lx
+    Player.dy = Player.dy + ly
+
+    print(lx, ly)
+
+    if love.keyboard.isDown('space') or Joystick:isDown(1) then
         Player:shoot()
     end
 
