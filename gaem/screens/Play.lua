@@ -6,7 +6,9 @@ function Play:enter()
 end
 
 function Play:render()
+    cam:attach()
     Player:render()
+    cam:detach()
 
     for k, item in pairs(Projectiles) do
         item:render()

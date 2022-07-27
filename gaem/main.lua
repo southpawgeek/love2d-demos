@@ -29,6 +29,7 @@ function love.load()
     Screen:change('Title')
 
     Player = Player()
+    cam = Camera()
     Projectiles = {}
 end
 

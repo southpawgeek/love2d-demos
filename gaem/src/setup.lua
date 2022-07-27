@@ -1,4 +1,5 @@
 -- use third-party stuff
+Camera = require 'lib/camera'
 Class = require 'lib/class'
 Push = require 'lib/push'
 Baton = require 'lib/baton'
