@@ -37,7 +37,6 @@ function Player:update(dt)
     if self.y > VIRTUAL_HEIGHT + 10 then
         self.y = 0
     end
-    cam:lockPosition(self.x, self.y)
 end
 
 function Player:shoot()
