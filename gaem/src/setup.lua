@@ -1,6 +1,7 @@
 -- use third-party stuff
 Class = require 'lib/class'
 Push = require 'lib/push'
+Baton = require 'lib/baton'
 
 require 'lib/BaseState'
 require 'lib/StateMachine'
@@ -52,4 +53,20 @@ end
 Screen = StateMachine {
     ['Title'] = function() return Title() end,
     ['Play'] = function() return Play() end
+}
+
+-- control stuff
+Control = Baton.new {
+    controls = {
+        left = {'key:left', 'axis:leftx-', 'button:dpleft'},
+        right = {'key:right', 'axis:leftx+', 'button:dpright'},
+        up = {'key:up', 'axis:lefty-', 'button:dpup'},
+        down = {'key:down', 'axis:lefty+', 'button:dpdown'},
+        action = {'key:space', 'key:return', 'button:a', 'mouse:1'},
+    },
+    pairs = {
+        move = {'left', 'right', 'up', 'down'}
+    },
+    joystick = love.joystick.getJoysticks()[1],
+    deadzone = .33
 }

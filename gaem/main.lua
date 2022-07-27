@@ -20,15 +20,6 @@ function love.load()
     -- get refresh rate so our dt/NDT stuff is nice
     getRefresh()
 
-    Joystick = {}
-
-    local joysticks = love.joystick.getJoysticks()
-    for i, joystick in ipairs(joysticks) do
-        if joystick:isConnected() then
-            Joystick = joystick
-        end
-    end
-
     -- initialize keys and mouse button tables
     love.keyboard.keysPressed = {}
     love.mouse.buttonsPressed = {}
@@ -43,6 +34,9 @@ end
 
 -- this is the game loop, dt is usually a fraction of a second
 function love.update(dt)
+    -- update controls
+    Control:update()
+
     -- keep a running total of time passed
     NDT = NDT + dt
 
@@ -55,7 +49,6 @@ function love.update(dt)
         -- refresh these tables because they were handled by the Screen:update method
         love.keyboard.keysPressed = {}
         love.mouse.buttonsPressed = {}
-        love.joystick.buttonsPressed = {}
     end
 end
 
@@ -80,12 +73,4 @@ end
 -- returns a bool of whether the key was pressed
 function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
-end
-
-function love.gamepadpressed(joystick, button)
-    love.joystick.buttonsPressed[button] = true
-end
-
-function love.joystick.wasPressed(button)
-   return love.joystick.wasPressed[button]
 end

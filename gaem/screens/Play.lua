@@ -19,31 +19,31 @@ function Play:update(dt)
         Screen:change('Title')
     end
 
-    -- arrow controls
-    if love.keyboard.isDown('up') then
-        Player.dy = Player.dy - 1
+    if Control:down 'left' then
+        Player.dx = Player.dx - dt * Player.speed
     end
 
-    if love.keyboard.isDown('down') then
-        Player.dy = Player.dy + 1
+    if Control:down 'right' then
+        Player.dx = Player.dx + dt * Player.speed
     end
 
-    if love.keyboard.isDown('left') then
-        Player.dx = Player.dx - 1
+    if Control:down 'up' then
+        Player.dy = Player.dy - dt * Player.speed
     end
 
-    if love.keyboard.isDown('right') then
-        Player.dx = Player.dx + 1
+    if Control:down 'down' then
+        Player.dy = Player.dy + dt * Player.speed
     end
 
-    -- left stick controls
-    lx, ly = Joystick:getAxes()
-    Player.dx = Player.dx + lx
-    Player.dy = Player.dy + ly
+    if not Control:down 'left' and not Control:down 'right' then
+        Player.dx = 0
+    end
 
-    print(lx, ly)
+    if not Control:down 'up' and not Control:down 'down' then
+        Player.dy = 0
+    end
 
-    if love.keyboard.isDown('space') or Joystick:isDown(1) then
+    if Control:down 'action' then
         Player:shoot()
     end
 

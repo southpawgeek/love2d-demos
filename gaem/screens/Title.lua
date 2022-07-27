@@ -10,8 +10,7 @@ function Title:render()
 end
 
 function Title:update(dt)
-    -- enter or a takes you to the play screen
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') or Joystick:isDown(1) then
+    if Control:pressed 'action' then
         Screen:change('Play')
     end
 
