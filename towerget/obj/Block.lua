@@ -15,7 +15,7 @@ end
 
 function Block:render()
     ratio = self:healthPercent()
-   love.graphics.setColor(0, ratio, ratio, 1)
+   love.graphics.setColor(0, 1, 1, ratio)
    love.graphics.rectangle('fill', self.x, self.y, 3, 3)
 end
 
