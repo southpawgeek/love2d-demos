@@ -8,6 +8,7 @@ require 'lib/StateMachine'
 -- screen states
 require 'screens/Title'
 require 'screens/Play'
+require 'screens/GameOver'
 
 require 'obj/Hoem'
 require 'obj/Mob'
@@ -51,5 +52,6 @@ end
 -- state machine for screens
 Screen = StateMachine {
     ['Title'] = function() return Title() end,
-    ['Play'] = function() return Play() end
+    ['Play'] = function() return Play() end,
+    ['GameOver'] = function() return GameOver() end
 }

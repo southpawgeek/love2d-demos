@@ -29,6 +29,10 @@ function Play:update(dt)
         Screen:change('Title')
     end
 
+    if self.hoem.health < 0 then
+        Screen:change('GameOver')
+    end
+
     -- mouseclick to spawn block
     local p = love.mouse.wasPressed(1)
 
@@ -51,6 +55,7 @@ function Play:update(dt)
     for k, block in pairs(self.blocks) do
         if block.health < 1 then
             block:exit()
+            self.hoem.score = self.hoem.score + block.points
             table.remove(self.blocks, k)
         end
 

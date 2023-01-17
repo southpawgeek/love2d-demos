@@ -6,6 +6,7 @@ function Block:init(x, y)
 
    self.maxhealth = 10
    self.health = 10
+   self.points = 5
    print('init block: ' .. self.x .. '/' .. self.y)
 end
 
