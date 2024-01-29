@@ -36,14 +36,14 @@ VIRTUAL_WIDTH = 256
 VIRTUAL_HEIGHT = 144
 
 -- mouse button constants
-PRIMARY_BUTTON = 1 -- usually left-click unless OS settings alter it
+PRIMARY_BUTTON = 1   -- usually left-click unless OS settings alter it
 SECONDARY_BUTTON = 2 -- usually right-click
-THIRD_BUTTON = 3 -- usually middle-click
+THIRD_BUTTON = 3     -- usually middle-click
 
 -- utilities
 -- sets the refresh rate global, defaults to 60
 function getRefresh()
-    undef, undef, flags = love.window.getMode()
+    local undef, undef, flags = love.window.getMode()
     REFRESH = flags.refreshrate
     if REFRESH == 0 then REFRESH = 60 end
     print('setting refresh rate to ' .. REFRESH)

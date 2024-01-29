@@ -1,23 +1,23 @@
-Block = Class{}
+Block = Class {}
 
 function Block:init(x, y)
-   self.x = x
-   self.y = y
+    self.x = x
+    self.y = y
 
-   self.maxhealth = 10
-   self.health = 10
-   self.points = 5
-   print('init block: ' .. self.x .. '/' .. self.y)
+    self.maxhealth = 10
+    self.health = 10
+    self.points = 5
+    print('init block: ' .. self.x .. '/' .. self.y)
 end
 
 function Block:exit()
-   print('block dead')
+    print('block dead')
 end
 
 function Block:render()
-    ratio = self:healthPercent()
-   love.graphics.setColor(0, 1, 1, ratio)
-   love.graphics.rectangle('fill', self.x, self.y, 3, 3)
+    local ratio = self:healthPercent()
+    love.graphics.setColor(0, 1, 1, ratio)
+    love.graphics.rectangle('fill', self.x, self.y, 3, 3)
 end
 
 function Block:update(dt)

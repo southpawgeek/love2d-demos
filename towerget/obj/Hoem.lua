@@ -1,4 +1,4 @@
-Hoem = Class{}
+Hoem = Class {}
 
 function Hoem:init()
     self.x = VIRTUAL_WIDTH / 2
@@ -12,7 +12,7 @@ function Hoem:init()
 end
 
 function Hoem:render()
-    ratio = self:healthCalculate()
+    local ratio = self:healthCalculate()
     love.graphics.setColor(1, ratio, ratio, 1)
     love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
 
