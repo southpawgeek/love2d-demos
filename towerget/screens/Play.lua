@@ -9,6 +9,7 @@ function Play:enter()
     self.mobMax = 5
     self.mobs = {}
     self.blocks = {}
+    self.pause = false
 end
 
 function Play:render()
@@ -21,12 +22,23 @@ function Play:render()
     for k, block in pairs(self.blocks) do
         block:render()
     end
+
+    if self.pause then
+        local pause = 'PAUSE'
+        local text_width = love.graphics.getFont():getWidth(pause)
+        love.graphics.print(pause, VIRTUAL_WIDTH - text_width, 0)
+        return
+    end
 end
 
 function Play:update(dt)
     -- esc to go back to title
     if love.keyboard.wasPressed('escape') then
-        Screen:change('Title')
+        self.pause = not self.pause
+    end
+
+    if self.pause then
+        return
     end
 
     if self.hoem.health < 0 then
@@ -34,16 +46,16 @@ function Play:update(dt)
     end
 
     -- mouseclick to spawn block
-    local p = love.mouse.wasPressed(1)
+    local click = love.mouse.wasPressed(1)
 
-    if p then
-        table.insert(self.blocks, Block(p.x, p.y))
+    if click then
+        table.insert(self.blocks, Block(click.x, click.y))
     end
 
     self.mobTimer = self.mobTimer + dt
     if self.mobTimer > self.mobSpawn then
         -- spawn up to x mobs per timer
-        mob_number = math.random(self.mobMax)
+        local mob_number = math.random(self.mobMax)
         for i = 1, mob_number do
             -- target destination is set on spawn
             table.insert(self.mobs, Mob(self.hoem.x, self.hoem.y))
