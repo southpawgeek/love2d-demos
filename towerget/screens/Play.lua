@@ -5,7 +5,7 @@ function Play:enter()
     SCREEN = self._name
     self.hoem = Hoem()
     self.mobTimer = 0
-    self.mobSpawn = 0.2
+    self.mobSpawn = 1 -- interval for mob spawning
     self.mobMax = 5
     self.mobs = {}
     self.blocks = {}
@@ -53,6 +53,7 @@ function Play:update(dt)
     end
 
     self.mobTimer = self.mobTimer + dt
+    -- determines how often new mobs should spawn
     if self.mobTimer > self.mobSpawn then
         -- spawn up to x mobs per timer
         local mob_number = math.random(self.mobMax)
@@ -64,6 +65,7 @@ function Play:update(dt)
         self.mobTimer = 0
     end
 
+    -- remove dead blocks
     for k, block in pairs(self.blocks) do
         if block.health < 1 then
             block:exit()
@@ -71,6 +73,7 @@ function Play:update(dt)
             table.remove(self.blocks, k)
         end
 
+        -- checks for damage to blocks
         for j, mob in pairs(self.mobs) do
             if block:collides(mob) then
                 block.health = block.health - 1
@@ -81,6 +84,7 @@ function Play:update(dt)
         block:update(dt)
     end
 
+    -- checks for damage to the core
     for k, mob in pairs(self.mobs) do
         if mob:collides(self.hoem) then
             self.hoem.health = self.hoem.health - 1

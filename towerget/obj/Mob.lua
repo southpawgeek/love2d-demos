@@ -20,14 +20,14 @@ function Mob:render()
 end
 
 function Mob:update(dt)
-    angle = math.atan2(self.desty - self.y, self.destx - self.x)
+    local angle = math.atan2(self.desty - self.y, self.destx - self.x)
     self.x = self.x + math.cos(angle) * self.speed * dt
     self.y = self.y + math.sin(angle) * self.speed * dt
 end
 
 function Mob:getSpawnPoint()
-    x = math.random(VIRTUAL_WIDTH)
-    y = math.random(VIRTUAL_HEIGHT)
+    local x = math.random(VIRTUAL_WIDTH)
+    local y = math.random(VIRTUAL_HEIGHT)
    return x, y
 end
 
