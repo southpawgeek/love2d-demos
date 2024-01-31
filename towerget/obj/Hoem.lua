@@ -13,7 +13,7 @@ end
 
 function Hoem:render()
     local ratio = self:healthCalculate()
-    love.graphics.setColor(1, ratio, ratio, 1)
+    love.graphics.setColor(1, ratio, 0, 1)
     love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
 
     love.graphics.setColor(1, 1, 1, 1)

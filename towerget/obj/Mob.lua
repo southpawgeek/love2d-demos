@@ -1,4 +1,4 @@
-Mob = Class{}
+Mob = Class {}
 
 function Mob:init(x, y)
     self.x, self.y = self:getSpawnPoint()
@@ -11,12 +11,12 @@ end
 
 function Mob:exit()
     self.alive = false
-    print('mob dead')
+    --print('mob dead')
 end
 
 function Mob:render()
     love.graphics.setColor(1, 1, 1, 1)
-   love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
+    love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
 end
 
 function Mob:update(dt)
@@ -26,9 +26,16 @@ function Mob:update(dt)
 end
 
 function Mob:getSpawnPoint()
-    local x = math.random(VIRTUAL_WIDTH)
-    local y = math.random(VIRTUAL_HEIGHT)
-   return x, y
+    local x, y = 0, 0
+    local ignore_x_or_y = math.random(0, 1)
+    if ignore_x_or_y == 0 then
+        x = math.random(VIRTUAL_WIDTH)
+        y = math.random(0, 1) * VIRTUAL_HEIGHT
+    else
+        x = math.random(0, 1) * VIRTUAL_WIDTH
+        y = math.random(VIRTUAL_HEIGHT)
+    end
+    return x, y
 end
 
 function Mob:collides(hoem)

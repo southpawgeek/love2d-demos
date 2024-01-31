@@ -1,4 +1,4 @@
-Play = Class{__includes = BaseState}
+Play = Class { __includes = BaseState }
 Play._name = 'Play'
 
 function Play:enter()
@@ -53,7 +53,6 @@ function Play:update(dt)
     end
 
     self.mobTimer = self.mobTimer + dt
-    -- determines how often new mobs should spawn
     if self.mobTimer > self.mobSpawn then
         -- spawn up to x mobs per timer
         local mob_number = math.random(self.mobMax)
@@ -69,15 +68,23 @@ function Play:update(dt)
     for k, block in pairs(self.blocks) do
         if block.health < 1 then
             block:exit()
-            self.hoem.score = self.hoem.score + block.points
+            --self.hoem.score = self.hoem.score + block.points
             table.remove(self.blocks, k)
         end
 
-        -- checks for damage to blocks
+        -- checks for mobs hitting blocks
         for j, mob in pairs(self.mobs) do
             if block:collides(mob) then
                 block.health = block.health - 1
                 mob:exit()
+            end
+            -- checks for block projectiles hitting mobs
+            for l, projectile in pairs(block.projectiles) do
+                if projectile:collides(mob) then
+                    print('killed a mob')
+                    self.hoem.score = self.hoem.score + 1
+                    mob:exit()
+                end
             end
         end
 

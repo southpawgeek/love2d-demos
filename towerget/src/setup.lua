@@ -13,6 +13,7 @@ require 'screens/GameOver'
 require 'obj/Hoem'
 require 'obj/Mob'
 require 'obj/Block'
+require 'obj/Projectile'
 
 -- Push uses this to create the window
 WINDOW_WIDTH = 1024
