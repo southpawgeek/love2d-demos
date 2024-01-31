@@ -10,10 +10,10 @@ require 'screens/Title'
 require 'screens/Play'
 require 'screens/GameOver'
 
-require 'obj/Hoem'
-require 'obj/Mob'
-require 'obj/Block'
-require 'obj/Projectile'
+require 'obj/Hoem'       -- the core
+require 'obj/Mob'        -- enemies
+require 'obj/Block'      -- towers
+require 'obj/Projectile' -- bullets fired by Block
 
 -- Push uses this to create the window
 WINDOW_WIDTH = 1024
@@ -33,8 +33,8 @@ REFRESH = 0
 TITLE = 'cool game title'
 
 -- the game gets scaled to this resolution
-VIRTUAL_WIDTH = 256
-VIRTUAL_HEIGHT = 144
+VIRTUAL_WIDTH = 512
+VIRTUAL_HEIGHT = 288
 
 -- mouse button constants
 PRIMARY_BUTTON = 1   -- usually left-click unless OS settings alter it

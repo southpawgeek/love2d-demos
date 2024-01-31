@@ -34,10 +34,10 @@ function love.update(dt)
     NDT = NDT + dt
 
     -- only update once per.. hz?
-    if NDT > 1/REFRESH then
+    if NDT > 1 / REFRESH then
         Screen:update(NDT)
         -- if NDT is over 1 second, reset it to the remainder
-        NDT = NDT % 1/REFRESH
+        NDT = NDT % 1 / REFRESH
 
         -- refresh these tables because they were handled by the Screen:update method
         love.keyboard.keysPressed = {}
@@ -71,10 +71,10 @@ end
 function love.mousepressed(x, y, button)
     px, py = Push:toGame(x, y)
     if px and py then
-        love.mouse.buttonsPressed[button] = {x=px, y=py, button=button}
+        love.mouse.buttonsPressed[button] = { x = px, y = py, button = button }
     end
 end
 
 function love.mouse.wasPressed(button)
-   return love.mouse.buttonsPressed[button]
+    return love.mouse.buttonsPressed[button]
 end
