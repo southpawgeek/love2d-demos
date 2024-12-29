@@ -18,7 +18,7 @@ function love.load()
     })
 
     -- get refresh rate so our dt/NDT stuff is nice
-    getRefresh()
+    GetRefresh()
 
     -- initialize keys and mouse button tables
     love.keyboard.keysPressed = {}
@@ -55,7 +55,7 @@ end
 -- Push thing, can leave this alone
 function love.resize(w, h)
     Push:resize(w, h)
-    getRefresh()
+    GetRefresh()
 end
 
 -- sets a bool so we know what key is pressed
@@ -69,7 +69,7 @@ function love.keyboard.wasPressed(key)
 end
 
 function love.mousepressed(x, y, button)
-    px, py = Push:toGame(x, y)
+    local px, py = Push:toGame(x, y)
     if px and py then
         love.mouse.buttonsPressed[button] = { x = px, y = py, button = button }
     end

@@ -43,7 +43,7 @@ THIRD_BUTTON = 3     -- usually middle-click
 
 -- utilities
 -- sets the refresh rate global, defaults to 60
-function getRefresh()
+function GetRefresh()
     local undef, undef, flags = love.window.getMode()
     REFRESH = flags.refreshrate
     if REFRESH == 0 then REFRESH = 60 end

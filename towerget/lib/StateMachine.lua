@@ -1,3 +1,4 @@
+---@diagnostic disable: redundant-parameter
 --
 -- StateMachine - a state machine
 --

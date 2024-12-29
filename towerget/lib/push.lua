@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields, undefined-field, param-type-mismatch
 -- push.lua v0.4
 
 -- Copyright (c) 2020 Ulysse Ramage
