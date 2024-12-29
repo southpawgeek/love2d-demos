@@ -60,5 +60,5 @@ Screen = StateMachine {
     ['GameOver'] = function() return GameOver() end
 }
 
-LANG = 'es'
+LANG = 'en'
 LOC = S[LANG]
