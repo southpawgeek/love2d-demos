@@ -1,4 +1,4 @@
-Title = Class{__includes = BaseState}
+Title = Class { __includes = BaseState }
 Title._name = 'Tower Get'
 
 function Title:enter()
@@ -6,7 +6,7 @@ function Title:enter()
 end
 
 function Title:render()
-    love.graphics.print('press enter to play or esc to quit', 0, 0)
+    love.graphics.print(LOC.S_TITLE, 0, 0)
 end
 
 function Title:update(dt)

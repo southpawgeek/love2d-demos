@@ -1,3 +1,6 @@
+-- load in localized strings
+require 'src/strings'
+
 -- use third-party stuff
 Class = require 'lib/class'
 Push = require 'lib/push'
@@ -56,3 +59,6 @@ Screen = StateMachine {
     ['Play'] = function() return Play() end,
     ['GameOver'] = function() return GameOver() end
 }
+
+LANG = 'es'
+LOC = S[LANG]

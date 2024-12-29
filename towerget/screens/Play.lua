@@ -24,9 +24,8 @@ function Play:render()
     end
 
     if self.pause then
-        local pause = 'PAUSE'
-        local text_width = love.graphics.getFont():getWidth(pause)
-        love.graphics.print(pause, VIRTUAL_WIDTH - text_width, 0)
+        local text_width = love.graphics.getFont():getWidth(LOC.S_PAUSE)
+        love.graphics.print(LOC.S_PAUSE, VIRTUAL_WIDTH - text_width, 0)
         return
     end
 end
