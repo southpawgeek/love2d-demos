@@ -33,7 +33,7 @@ REFRESH = 0
 
 -- (probably) constant values
 -- window title
-TITLE = 'cool game title'
+TITLE = 'Tower Get'
 
 -- the game gets scaled to this resolution
 VIRTUAL_WIDTH = 512

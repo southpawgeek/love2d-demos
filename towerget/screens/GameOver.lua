@@ -1,4 +1,4 @@
-GameOver = Class{__includes = BaseState}
+GameOver = Class { __includes = BaseState }
 GameOver._name = 'Game Over'
 
 function GameOver:enter()
@@ -6,7 +6,7 @@ function GameOver:enter()
 end
 
 function GameOver:render()
-    love.graphics.print('you died :( enter to play again, esc to title', 0, 0)
+    love.graphics.print(LOC.S_DIED, 0, 0)
 end
 
 function GameOver:update(dt)

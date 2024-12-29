@@ -17,8 +17,8 @@ function Hoem:render()
     love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
 
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print('hp: ' .. self.health, 0, 0)
-    love.graphics.print('xp: ' .. self.score, 0, 15)
+    love.graphics.print(LOC.S_HP .. self.health, 0, 0)
+    love.graphics.print(LOC.S_XP .. self.score, 0, 15)
 end
 
 function Hoem:healthCalculate()
