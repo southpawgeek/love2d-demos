@@ -8,6 +8,14 @@ function Play:enter()
 
     -- The currently placeable block type (forward-compatible with future types).
     self.activeBlockClass = Block
+    self.activeBlockVariant = 'basic'
+
+    -- Block variant selection state
+    self.selectedBlockVariantIndex = 1  -- 1=Basic, 2=Medium, 3=Large
+    self.selectedBlockVariant = BlockTypes['basic']
+
+    -- Variant names for UI
+    self.variantNames = { 'Basic', 'Medium', 'Large' }
 
     -- XP/level state (XP is currently `hoem.score`).
     self.level = 1
@@ -73,6 +81,9 @@ function Play:render()
     -- HUD stays steady (world shake is applied only to the world draw).
     self.hoemHud:render()
 
+    -- Block variant selector UI (above XP indicator)
+    self:renderBlockSelector()
+
     local dx, dy = self:getShakeOffset()
     if dx ~= 0 or dy ~= 0 then
         love.graphics.push()
@@ -101,9 +112,9 @@ function Play:render()
             -- Make the ghost easy to see: translucent fill + bright outline.
             love.graphics.setLineWidth(1)
             love.graphics.setColor(0, 1, 1, 0.25)
-            love.graphics.rectangle('fill', mx, my, 3, 3)
+            love.graphics.rectangle('fill', mx, my, self.selectedBlockVariant.size, self.selectedBlockVariant.size)
             love.graphics.setColor(0, 1, 1, 1)
-            love.graphics.rectangle('line', mx, my, 3, 3)
+            love.graphics.rectangle('line', mx, my, self.selectedBlockVariant.size, self.selectedBlockVariant.size)
             love.graphics.setLineWidth(1)
         end
     end
@@ -123,6 +134,38 @@ function Play:triggerShake(power)
     if not self.shakeCfg.enabled then return end
     power = power or self.shakeCfg.hitPower or 1
     self.shakeStrength = math.min(self.shakeCfg.maxOffset, (self.shakeStrength or 0) + power)
+end
+
+function Play:renderBlockSelector()
+    local font = love.graphics.getFont()
+    local blockSize = 24
+    local padding = 8
+    local totalWidth = (#self.variantNames * (blockSize + padding)) - padding
+    local startX = (VIRTUAL_WIDTH - totalWidth) / 2
+    local topY = 20
+    
+    for i, variantName in ipairs(self.variantNames) do
+        local variant = BlockTypes[string.lower(variantName)]
+        local x = startX + (i - 1) * (blockSize + padding)
+        local y = topY
+        
+        -- Draw block representation
+        love.graphics.setColor(variant.color[1], variant.color[2], variant.color[3], variant.color[4])
+        love.graphics.rectangle('fill', x, y, variant.size, variant.size)
+        
+        -- Draw selection indicator (outline)
+        if self.selectedBlockVariantIndex == i then
+            love.graphics.setLineWidth(2)
+            love.graphics.setColor(1, 0.8, 0, 1)
+            love.graphics.rectangle('line', x, y, variant.size, variant.size)
+            love.graphics.setLineWidth(1)
+        end
+        
+        -- Draw name
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.print(variantName, x + 2, y + variant.size + 8)
+        love.graphics.setColor(1, 1, 1, 1)
+    end
 end
 
 function Play:updateShake(dt)
@@ -166,11 +209,25 @@ function Play:update(dt)
         Screen:change('GameOver')
     end
 
+    -- Block variant selection via mousewheel
+    local wheel = love.mouse.getWheel()
+    if wheel ~= nil and wheel ~= 0 then
+        if wheel > 0 then
+            -- Scroll up: cycle to previous variant
+            self.selectedBlockVariantIndex = self.selectedBlockVariantIndex == 1 and 3 or self.selectedBlockVariantIndex - 1
+        else
+            -- Scroll down: cycle to next variant
+            self.selectedBlockVariantIndex = self.selectedBlockVariantIndex == 3 and 1 or self.selectedBlockVariantIndex + 1
+        end
+        self.selectedBlockVariant = BlockTypes[self.variantNames[self.selectedBlockVariantIndex]:lower()]
+    end
+    love.mouse.totalWheel = 0
+
     -- mouseclick to spawn block
     local click = love.mouse.wasPressed(1)
 
     if click then
-        table.insert(self.blocks, Block(click.x, click.y))
+        table.insert(self.blocks, Block(click.x, click.y, self.variantNames[self.selectedBlockVariantIndex]:lower()))
     end
 
     self.mobTimer = self.mobTimer + dt
@@ -206,14 +263,14 @@ function Play:update(dt)
                 mob:exit()
             end
             -- checks for block projectiles hitting mobs
-            for l, projectile in pairs(block.projectiles) do
-                if projectile:collides(mob) then
-                    print('killed a mob')
-                    self.hoem.score = self.hoem.score + 1
-                    self.hoem:playXpPickup(self:getLevelXpProgress(self.hoem.score))
-                    mob:exit()
-                end
+        for l, projectile in pairs(block.projectiles) do
+            if projectile:collides(mob) then
+                print('killed a mob')
+                self.hoem.score = self.hoem.score + 1
+                self.hoem:playXpPickup(self:getLevelXpProgress(self.hoem.score))
+                mob:exit()
             end
+        end
         end
     end
 

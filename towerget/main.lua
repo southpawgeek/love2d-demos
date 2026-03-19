@@ -23,6 +23,7 @@ function love.load()
     -- initialize keys and mouse button tables
     love.keyboard.keysPressed = {}
     love.mouse.buttonsPressed = {}
+    love.mouse.totalWheel = 0
 
     -- start by loading the Title Screen
     Screen:change('Title')
@@ -35,6 +36,7 @@ function love.update(dt)
 
     -- only update once per.. hz?
     if NDT > 1 / REFRESH then
+        love.event.pump("mwheel")
         Screen:update(NDT)
         -- if NDT is over 1 second, reset it to the remainder
         NDT = NDT % 1 / REFRESH
@@ -77,4 +79,12 @@ end
 
 function love.mouse.wasPressed(button)
     return love.mouse.buttonsPressed[button]
+end
+
+function love.wheelmoved(x, y)
+    love.mouse.totalWheel = love.mouse.totalWheel + y
+end
+
+function love.mouse.getWheel()
+    return love.mouse.totalWheel
 end

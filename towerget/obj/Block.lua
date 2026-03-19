@@ -1,16 +1,52 @@
+BlockTypes = {
+    ['basic'] = {
+        name = 'Basic',
+        size = 3,
+        footprint = 3,
+        color = {1, 1, 1, 1},
+        maxhealth = 10,
+        health = 10,
+        points = 5,
+        speed = 0.2,
+    },
+    ['medium'] = {
+        name = 'Medium',
+        size = 5,
+        footprint = 5,
+        color = {1, 1, 1, 1},
+        maxhealth = 15,
+        health = 15,
+        points = 8,
+        speed = 0.15,
+    },
+    ['large'] = {
+        name = 'Large',
+        size = 9,
+        footprint = 9,
+        color = {1, 1, 1, 1},
+        maxhealth = 25,
+        health = 25,
+        points = 12,
+        speed = 0.1,
+    },
+}
+
 Block = Class {}
 
-function Block:init(x, y)
+function Block:init(x, y, variant)
     self.x = x
     self.y = y
 
-    self.maxhealth = 10
-    self.health = 10
-    self.points = 5
+    local config = BlockTypes[variant or 'basic']
+    self.config = config
+    self.variant = variant or 'basic'
+
+    self.maxhealth = config.maxhealth
+    self.health = config.health
+    self.points = config.points
     self.projectiles = {}
     self.fire = 0
-    self.speed = 0.2
-    print('init block: ' .. self.x .. '/' .. self.y)
+    self.speed = config.speed
 end
 
 function Block:exit()
@@ -19,8 +55,8 @@ end
 
 function Block:render()
     local ratio = self:healthPercent()
-    love.graphics.setColor(0, 1, 1, ratio)
-    love.graphics.rectangle('fill', self.x, self.y, 3, 3)
+    love.graphics.setColor(self.config.color[1], self.config.color[2], self.config.color[3], self.config.color[4] * ratio)
+    love.graphics.rectangle('fill', self.x, self.y, self.config.size, self.config.size)
 
     -- render all child projectiles
     for k, projectile in pairs(self.projectiles) do
@@ -48,15 +84,13 @@ end
 
 function Block:collides(mob)
     -- 2D AABB overlap between:
-    --  - this block's 3x3 footprint at (self.x, self.y)
+    --  - this block's size-based footprint at (self.x, self.y)
     --  - the mob's size-based square at (mob.x, mob.y)
-    local blockSize = 3
-
-    if self.x > mob.x + mob.size or mob.x > self.x + blockSize then
+    if self.x > mob.x + mob.size or mob.x > self.x + self.config.size then
         return false
     end
 
-    if self.y > mob.y + mob.size or mob.y > self.y + blockSize then
+    if self.y > mob.y + mob.size or mob.y > self.y + self.config.size then
         return false
     end
 
