@@ -47,15 +47,20 @@ function Block:update(dt)
 end
 
 function Block:collides(mob)
-    if math.abs(self.x - mob.x) <= 3 then
-        return true
+    -- 2D AABB overlap between:
+    --  - this block's 3x3 footprint at (self.x, self.y)
+    --  - the mob's size-based square at (mob.x, mob.y)
+    local blockSize = 3
+
+    if self.x > mob.x + mob.size or mob.x > self.x + blockSize then
+        return false
     end
 
-    if math.abs(self.y - mob.y) <= 3 then
-        return true
+    if self.y > mob.y + mob.size or mob.y > self.y + blockSize then
+        return false
     end
 
-    return false
+    return true
 end
 
 function Block:healthPercent()

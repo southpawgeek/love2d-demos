@@ -71,6 +71,10 @@ function Play:update(dt)
             table.remove(self.blocks, k)
         end
 
+        -- Advance projectiles for this frame before collision checks, so what you see
+        -- aligns with the projectile positions used for hits.
+        block:update(dt)
+
         -- checks for mobs hitting blocks
         for j, mob in pairs(self.mobs) do
             if block:collides(mob) then
@@ -86,8 +90,6 @@ function Play:update(dt)
                 end
             end
         end
-
-        block:update(dt)
     end
 
     -- checks for damage to the core
