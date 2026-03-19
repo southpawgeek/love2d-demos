@@ -137,7 +137,7 @@ function Play:update(dt)
     if self.mobTimer > self.mobSpawn then
         -- spawn up to x mobs per timer
         local mob_number = math.random(self.mobMax)
-        local mobTypes = { 'normal', 'squirrelly', 'zoomer' }
+        local mobTypes = { 'normal', 'squirrelly', 'zoomer', 'bouncy' }
         for i = 1, mob_number do
             -- target destination is set on spawn
             local mobType = mobTypes[math.random(#mobTypes)]

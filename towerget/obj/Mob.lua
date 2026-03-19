@@ -31,6 +31,24 @@ local MobTypes = {
         zigAngle = 0.95, -- radians offset from base angle
         zigIntervalMin = 0.05,
         zigIntervalMax = 0.18
+    },
+    bouncy = {
+        color = {1, 1, 0.7, 1}, -- light yellow
+        shape = 'circle',
+        speedMin = 18,
+        speedMax = 55,
+        sizeMin = 4,
+        sizeMax = 10,
+
+        -- "Bounces": oscillate toward/away along the radial-to-core direction.
+        bounceFreq = 4.0, -- bounces per second
+        forwardBias = 0.35, -- baseline forward push (keeps average movement toward core)
+        awayAmp = 0.95, -- amplitude of away oscillation (will be faded out near the core)
+
+        -- "Circular": add tangential motion so the path arcs around the core.
+        orbitAmp = 0.8,
+        orbitFreqMul = 1.25,
+        fadeDist = 110 -- when close to core, reduce away so it converges
     }
 }
 
@@ -63,6 +81,9 @@ function Mob:init(x, y, mobType)
         self.zigAngle = cfg.zigAngle
         self.zigIntervalMin = cfg.zigIntervalMin
         self.zigIntervalMax = cfg.zigIntervalMax
+    elseif self.mobType == 'bouncy' then
+        self.bouncePhase = math.random() * math.pi * 2
+        self.orbitPhase = math.random() * math.pi * 2
     end
 
     print('init mob: ' .. self.x .. '/' .. self.y)
@@ -111,12 +132,24 @@ function Mob:render()
         love.graphics.polygon('fill', pts)
         return
     end
+
+    if self.shape == 'circle' then
+        local r = self.size
+        local radius = r / 2
+        local cx, cy = self.x + radius, self.y + radius
+        love.graphics.circle('fill', cx, cy, radius)
+        return
+    end
 end
 
 function Mob:update(dt)
     self.t = (self.t or 0) + dt
 
-    local baseAngle = math.atan2(self.desty - self.y, self.destx - self.x)
+    local dxToCore = (self.destx - self.x)
+    local dyToCore = (self.desty - self.y)
+    local distToCore = math.sqrt(dxToCore * dxToCore + dyToCore * dyToCore)
+
+    local baseAngle = math.atan2(dyToCore, dxToCore)
     local angle = baseAngle
 
     if self.mobType == 'squirrelly' then
@@ -137,6 +170,33 @@ function Mob:update(dt)
         end
 
         angle = baseAngle + (self.zigDir or 1) * (self.zigAngle or 0.95)
+
+    elseif self.mobType == 'bouncy' then
+        local cfg = MobTypes[self.mobType] or MobTypes.bouncy
+
+        -- Unit vectors pointing toward the core and perpendicular to it.
+        local dist = distToCore
+        if dist < 0.0001 then dist = 0.0001 end
+        local ux, uy = dxToCore / dist, dyToCore / dist
+        local px, py = -uy, ux
+
+        -- Fade away oscillation as we get close to the core, so it can converge.
+        local fade = math.min(1, distToCore / (cfg.fadeDist or 110))
+
+        local phase = self.bouncePhase + (self.t * cfg.bounceFreq * math.pi * 2)
+        local awayOsc = math.sin(phase) -- -1..1
+        local forwardFactor = (cfg.forwardBias or 0.35) + (cfg.awayAmp or 0.95) * fade * awayOsc
+
+        local orbitPhase = self.orbitPhase + phase * (cfg.orbitFreqMul or 1.25)
+        local tangentialFactor = (cfg.orbitAmp or 0.8) * math.cos(orbitPhase)
+
+        local vx = ux * self.speed * forwardFactor + px * self.speed * tangentialFactor
+        local vy = uy * self.speed * forwardFactor + py * self.speed * tangentialFactor
+
+        self.moveAngle = math.atan2(vy, vx)
+        self.x = self.x + vx * dt
+        self.y = self.y + vy * dt
+        return
     end
 
     self.moveAngle = angle
