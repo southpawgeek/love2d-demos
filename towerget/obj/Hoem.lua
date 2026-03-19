@@ -13,6 +13,7 @@ function Hoem:init()
     -- Load once and reuse; we'll only tweak pitch per hit.
     -- Path varies depending on where `love` is launched from, so we try a couple options.
     self._hitHurtSource = nil
+    self._pickupCoinSource = nil
     do
         local function tryLoad(path)
             local ok, src = pcall(function()
@@ -23,9 +24,26 @@ function Hoem:init()
         end
 
         self._hitHurtSource = tryLoad('towerget/sfx/hitHurt.wav') or tryLoad('sfx/hitHurt.wav')
+        self._pickupCoinSource = tryLoad('towerget/sfx/pickupCoin.wav') or tryLoad('sfx/pickupCoin.wav')
     end
 
     print('init Hoem: ' .. self.x .. '/' .. self.y .. ' ' .. self.health .. 'hp')
+end
+
+function Hoem:playXpPickup(progress)
+    if not self._pickupCoinSource then
+        return
+    end
+
+    local p = progress or 0
+    if p < 0 then p = 0 end
+    if p > 1 then p = 1 end
+
+    -- Strong per-level ramp: 1.00 -> 2.00
+    local pitch = 1 + p
+    self._pickupCoinSource:stop()
+    self._pickupCoinSource:setPitch(pitch)
+    self._pickupCoinSource:play()
 end
 
 function Hoem:takeDamage(amount)

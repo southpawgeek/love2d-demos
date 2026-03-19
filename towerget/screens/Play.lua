@@ -9,9 +9,14 @@ function Play:enter()
     -- The currently placeable block type (forward-compatible with future types).
     self.activeBlockClass = Block
 
+    -- XP/level state (XP is currently `hoem.score`).
+    self.level = 1
+    self.levelXpStart, self.levelXpNext = TUNING:xpWindowForLevel(self.level)
+    self.difficulty = TUNING:difficultyByLevel(self.level)
+
     self.mobTimer = 0
-    self.mobSpawn = 1 -- interval for mob spawning
-    self.mobMax = 5
+    self.mobSpawn = self.difficulty.mobSpawn -- interval for mob spawning
+    self.mobMax = self.difficulty.mobMax
     self.mobs = {}
     self.blocks = {}
     self.pause = false
@@ -28,6 +33,40 @@ function Play:enter()
     }
     self.shakeStrength = 0
     self.shakePhase = 0
+end
+
+function Play:updateLevelFromXp()
+    local xp = self.hoem.score or 0
+    local newLevel = TUNING:levelForXp(xp)
+    if newLevel ~= self.level then
+        self.level = newLevel
+        self.levelXpStart, self.levelXpNext = TUNING:xpWindowForLevel(self.level)
+        self.difficulty = TUNING:difficultyByLevel(self.level)
+        self.mobSpawn = self.difficulty.mobSpawn
+        self.mobMax = self.difficulty.mobMax
+    end
+
+    -- Keep HUD progress updated even when level doesn't change.
+    self.levelXpStart, self.levelXpNext = TUNING:xpWindowForLevel(self.level)
+    self.hoemHud:setXpProgress(xp, self.levelXpStart, self.levelXpNext)
+end
+
+function Play:getLevelXpProgress(xpOverride)
+    local xp = xpOverride
+    if xp == nil then
+        xp = self.hoem.score or 0
+    end
+
+    local level = TUNING:levelForXp(xp)
+    local startXp, nextXp = TUNING:xpWindowForLevel(level)
+    if not nextXp or nextXp <= startXp then
+        return 0
+    end
+
+    local p = (xp - startXp) / (nextXp - startXp)
+    if p < 0 then return 0 end
+    if p > 1 then return 1 end
+    return p
 end
 
 function Play:render()
@@ -121,6 +160,7 @@ function Play:update(dt)
     end
 
     self:updateShake(dt)
+    self:updateLevelFromXp()
 
     if self.hoem.health < 0 then
         Screen:change('GameOver')
@@ -141,7 +181,7 @@ function Play:update(dt)
         for i = 1, mob_number do
             -- target destination is set on spawn
             local mobType = mobTypes[math.random(#mobTypes)]
-            table.insert(self.mobs, Mob(self.hoem.x, self.hoem.y, mobType))
+            table.insert(self.mobs, Mob(self.hoem.x, self.hoem.y, mobType, self.difficulty))
         end
 
         self.mobTimer = 0
@@ -170,6 +210,7 @@ function Play:update(dt)
                 if projectile:collides(mob) then
                     print('killed a mob')
                     self.hoem.score = self.hoem.score + 1
+                    self.hoem:playXpPickup(self:getLevelXpProgress(self.hoem.score))
                     mob:exit()
                 end
             end

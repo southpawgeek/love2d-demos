@@ -1,5 +1,6 @@
 -- load in localized strings
 require 'src/strings'
+require 'src/tuning'
 
 -- use third-party stuff
 Class = require 'lib/class'
