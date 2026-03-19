@@ -95,7 +95,7 @@ function Play:update(dt)
     -- checks for damage to the core
     for k, mob in pairs(self.mobs) do
         if mob:collides(self.hoem) then
-            self.hoem.health = self.hoem.health - 1
+            self.hoem:takeDamage(1)
             mob:exit()
         end
 
