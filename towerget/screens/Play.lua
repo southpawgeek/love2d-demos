@@ -6,6 +6,9 @@ function Play:enter()
     self.hoem = Hoem()
     self.hoemHud = HoemHud(self.hoem)
 
+    -- The currently placeable block type (forward-compatible with future types).
+    self.activeBlockClass = Block
+
     self.mobTimer = 0
     self.mobSpawn = 1 -- interval for mob spawning
     self.mobMax = 5
@@ -45,6 +48,25 @@ function Play:render()
 
     for k, block in pairs(self.blocks) do
         block:render()
+    end
+
+    -- Ghost placement indicator (shows where the current block would be placed).
+    do
+        local mx, my = Push:toGame(love.mouse.getPosition())
+        if mx == nil or my == nil then
+            -- Fallback for any LOVE/mouse coordinate quirks.
+            mx, my = Push:toGame(love.mouse.getX(), love.mouse.getY())
+        end
+
+        if mx ~= nil and my ~= nil then
+            -- Make the ghost easy to see: translucent fill + bright outline.
+            love.graphics.setLineWidth(1)
+            love.graphics.setColor(0, 1, 1, 0.25)
+            love.graphics.rectangle('fill', mx, my, 3, 3)
+            love.graphics.setColor(0, 1, 1, 1)
+            love.graphics.rectangle('line', mx, my, 3, 3)
+            love.graphics.setLineWidth(1)
+        end
     end
 
     if dx ~= 0 or dy ~= 0 then
