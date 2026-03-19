@@ -17,7 +17,7 @@ end
 
 function Projectile:render()
     love.graphics.setColor(1, 0, 1, 1)
-    love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
+    love.graphics.rectangle('fill', self.x - self.size / 2, self.y - self.size / 2, self.size, self.size)
 end
 
 function Projectile:update(dt)
@@ -32,11 +32,19 @@ function Projectile:update(dt)
 end
 
 function Projectile:collides(mob)
-    if self.x > mob.x + mob.size or mob.x > self.x + self.size then
+    local projLeft = self.x - self.size / 2
+    local projRight = self.x + self.size / 2
+    local projTop = self.y - self.size / 2
+    local projBottom = self.y + self.size / 2
+    local mobLeft = mob.x - mob.size / 2
+    local mobRight = mob.x + mob.size / 2
+    local mobTop = mob.y - mob.size / 2
+    local mobBottom = mob.y + mob.size / 2
+
+    if projRight < mobLeft or mobRight < projLeft then
         return false
     end
-
-    if self.y > mob.y + mob.size or mob.y > self.y + self.size then
+    if projBottom < mobTop or mobBottom < projTop then
         return false
     end
 

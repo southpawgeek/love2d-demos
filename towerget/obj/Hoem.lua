@@ -64,9 +64,9 @@ end
 
 function Hoem:renderCore()
     local ratio = self:healthCalculate()
+    local halfSize = self.size / 2
     love.graphics.setColor(1, ratio, 0, 1)
-    love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
-
+    love.graphics.rectangle('fill', self.x - halfSize, self.y - halfSize, self.size, self.size)
 end
 
 function Hoem:renderHud()

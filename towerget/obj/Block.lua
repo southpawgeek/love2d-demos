@@ -56,7 +56,7 @@ end
 function Block:render()
     local ratio = self:healthPercent()
     love.graphics.setColor(self.config.color[1], self.config.color[2], self.config.color[3], self.config.color[4] * ratio)
-    love.graphics.rectangle('fill', self.x, self.y, self.config.size, self.config.size)
+    love.graphics.rectangle('fill', self.x - self.config.size / 2, self.y - self.config.size / 2, self.config.size, self.config.size)
 
     -- render all child projectiles
     for k, projectile in pairs(self.projectiles) do
@@ -84,13 +84,21 @@ end
 
 function Block:collides(mob)
     -- 2D AABB overlap between:
-    --  - this block's size-based footprint at (self.x, self.y)
-    --  - the mob's size-based square at (mob.x, mob.y)
-    if self.x > mob.x + mob.size or mob.x > self.x + self.config.size then
+    --  - this block's size-based footprint centered at (self.x, self.y)
+    --  - the mob's size-based square centered at (mob.x, mob.y)
+    local blockLeft = self.x - self.config.size / 2
+    local blockRight = self.x + self.config.size / 2
+    local blockTop = self.y - self.config.size / 2
+    local blockBottom = self.y + self.config.size / 2
+    local mobLeft = mob.x - mob.size / 2
+    local mobRight = mob.x + mob.size / 2
+    local mobTop = mob.y - mob.size / 2
+    local mobBottom = mob.y + mob.size / 2
+
+    if blockRight < mobLeft or mobRight < blockLeft then
         return false
     end
-
-    if self.y > mob.y + mob.size or mob.y > self.y + self.config.size then
+    if blockBottom < mobTop or mobBottom < blockTop then
         return false
     end
 

@@ -110,11 +110,12 @@ function Play:render()
 
         if mx ~= nil and my ~= nil then
             -- Make the ghost easy to see: translucent fill + bright outline.
+            local variant = self.selectedBlockVariant
             love.graphics.setLineWidth(1)
             love.graphics.setColor(0, 1, 1, 0.25)
-            love.graphics.rectangle('fill', mx, my, self.selectedBlockVariant.size, self.selectedBlockVariant.size)
+            love.graphics.rectangle('fill', mx - variant.size / 2, my - variant.size / 2, variant.size, variant.size)
             love.graphics.setColor(0, 1, 1, 1)
-            love.graphics.rectangle('line', mx, my, self.selectedBlockVariant.size, self.selectedBlockVariant.size)
+            love.graphics.rectangle('line', mx - variant.size / 2, my - variant.size / 2, variant.size, variant.size)
             love.graphics.setLineWidth(1)
         end
     end
@@ -137,17 +138,16 @@ function Play:triggerShake(power)
 end
 
 function Play:renderBlockSelector()
-    local font = love.graphics.getFont()
     local blockSize = 24
     local padding = 8
     local totalWidth = (#self.variantNames * (blockSize + padding)) - padding
     local startX = (VIRTUAL_WIDTH - totalWidth) / 2
-    local topY = 20
+    local bottomY = VIRTUAL_HEIGHT - 60
     
     for i, variantName in ipairs(self.variantNames) do
         local variant = BlockTypes[string.lower(variantName)]
         local x = startX + (i - 1) * (blockSize + padding)
-        local y = topY
+        local y = bottomY
         
         -- Draw block representation
         love.graphics.setColor(variant.color[1], variant.color[2], variant.color[3], variant.color[4])
@@ -160,11 +160,6 @@ function Play:renderBlockSelector()
             love.graphics.rectangle('line', x, y, variant.size, variant.size)
             love.graphics.setLineWidth(1)
         end
-        
-        -- Draw name
-        love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.print(variantName, x + 2, y + variant.size + 8)
-        love.graphics.setColor(1, 1, 1, 1)
     end
 end
 
@@ -223,10 +218,23 @@ function Play:update(dt)
     end
     love.mouse.totalWheel = 0
 
+    -- Block variant selection via left/right arrows
+    local left = love.keyboard.wasPressed('left') or love.keyboard.wasPressed('a')
+    local right = love.keyboard.wasPressed('right') or love.keyboard.wasPressed('d')
+    if left then
+        self.selectedBlockVariantIndex = self.selectedBlockVariantIndex == 1 and 3 or self.selectedBlockVariantIndex - 1
+        self.selectedBlockVariant = BlockTypes[self.variantNames[self.selectedBlockVariantIndex]:lower()]
+    end
+    if right then
+        self.selectedBlockVariantIndex = self.selectedBlockVariantIndex == 3 and 1 or self.selectedBlockVariantIndex + 1
+        self.selectedBlockVariant = BlockTypes[self.variantNames[self.selectedBlockVariantIndex]:lower()]
+    end
+
     -- mouseclick to spawn block
     local click = love.mouse.wasPressed(1)
 
     if click then
+        local variant = BlockTypes[self.variantNames[self.selectedBlockVariantIndex]:lower()]
         table.insert(self.blocks, Block(click.x, click.y, self.variantNames[self.selectedBlockVariantIndex]:lower()))
     end
 

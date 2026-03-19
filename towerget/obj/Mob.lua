@@ -101,7 +101,7 @@ function Mob:render()
     love.graphics.setColor(self.color[1], self.color[2], self.color[3], self.color[4] or 1)
 
     if self.shape == 'rect' then
-        love.graphics.rectangle('fill', self.x, self.y, r, r)
+        love.graphics.rectangle('fill', self.x - r / 2, self.y - r / 2, r, r)
         return
     end
 
@@ -219,11 +219,19 @@ function Mob:getSpawnPoint()
 end
 
 function Mob:collides(hoem)
-    if self.x > hoem.x + hoem.size or hoem.x > self.x + self.size then
+    local mobLeft = self.x - self.size / 2
+    local mobRight = self.x + self.size / 2
+    local mobTop = self.y - self.size / 2
+    local mobBottom = self.y + self.size / 2
+    local hoemLeft = hoem.x - hoem.size / 2
+    local hoemRight = hoem.x + hoem.size / 2
+    local hoemTop = hoem.y - hoem.size / 2
+    local hoemBottom = hoem.y + hoem.size / 2
+
+    if mobRight < hoemLeft or hoemRight < mobLeft then
         return false
     end
-
-    if self.y > hoem.y + hoem.size or hoem.y > self.y + self.size then
+    if mobBottom < hoemTop or hoemBottom < mobTop then
         return false
     end
 
