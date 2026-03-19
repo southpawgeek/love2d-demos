@@ -14,6 +14,7 @@ require 'screens/Play'
 require 'screens/GameOver'
 
 require 'obj/Hoem'       -- the core
+require 'obj/HoemHud'    -- HUD for core (separate from shake-able world)
 require 'obj/Mob'        -- enemies
 require 'obj/Block'      -- towers
 require 'obj/Projectile' -- bullets fired by Block

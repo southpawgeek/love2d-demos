@@ -44,14 +44,23 @@ function Hoem:takeDamage(amount)
     end
 end
 
-function Hoem:render()
+function Hoem:renderCore()
     local ratio = self:healthCalculate()
     love.graphics.setColor(1, ratio, 0, 1)
     love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
 
+end
+
+function Hoem:renderHud()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(LOC.S_HP .. self.health, 0, 0)
     love.graphics.print(LOC.S_XP .. self.score, 0, 15)
+end
+
+function Hoem:render()
+    -- Back-compat: render both core and HUD text.
+    self:renderCore()
+    self:renderHud()
 end
 
 function Hoem:healthCalculate()

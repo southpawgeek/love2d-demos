@@ -4,16 +4,40 @@ Play._name = 'Play'
 function Play:enter()
     SCREEN = self._name
     self.hoem = Hoem()
+    self.hoemHud = HoemHud(self.hoem)
+
     self.mobTimer = 0
     self.mobSpawn = 1 -- interval for mob spawning
     self.mobMax = 5
     self.mobs = {}
     self.blocks = {}
     self.pause = false
+
+    -- Configurable world-only screen shake.
+    -- Trigger via `self:triggerShake(power)` when the core takes damage.
+    self.shakeCfg = {
+        enabled = true,
+        hitPower = 6, -- strength added per hit (clamped by maxOffset)
+        maxOffset = 10, -- maximum translation in virtual pixels
+        decay = 10, -- exponential decay rate (higher = shorter shake)
+        frequency = 25, -- oscillation frequency (per second)
+        yScale = 0.6, -- vertical wobble multiplier
+    }
+    self.shakeStrength = 0
+    self.shakePhase = 0
 end
 
 function Play:render()
-    self.hoem:render()
+    -- HUD stays steady (world shake is applied only to the world draw).
+    self.hoemHud:render()
+
+    local dx, dy = self:getShakeOffset()
+    if dx ~= 0 or dy ~= 0 then
+        love.graphics.push()
+        love.graphics.translate(dx, dy)
+    end
+
+    self.hoem:renderCore()
 
     for k, mob in pairs(self.mobs) do
         mob:render()
@@ -23,11 +47,45 @@ function Play:render()
         block:render()
     end
 
+    if dx ~= 0 or dy ~= 0 then
+        love.graphics.pop()
+    end
+
     if self.pause then
         local text_width = love.graphics.getFont():getWidth(LOC.S_PAUSE)
         love.graphics.print(LOC.S_PAUSE, VIRTUAL_WIDTH - text_width, 0)
         return
     end
+end
+
+function Play:triggerShake(power)
+    if not self.shakeCfg.enabled then return end
+    power = power or self.shakeCfg.hitPower or 1
+    self.shakeStrength = math.min(self.shakeCfg.maxOffset, (self.shakeStrength or 0) + power)
+end
+
+function Play:updateShake(dt)
+    local s = self.shakeStrength or 0
+    if s <= 0 then return end
+
+    -- Advance phase for a smooth oscillation.
+    local twopi = math.pi * 2
+    self.shakePhase = self.shakePhase + dt * self.shakeCfg.frequency * twopi
+
+    -- Exponential decay so shake feels consistent across frame rates.
+    local decayFactor = math.exp(-self.shakeCfg.decay * dt)
+    self.shakeStrength = s * decayFactor
+    if self.shakeStrength < 0.01 then self.shakeStrength = 0 end
+end
+
+function Play:getShakeOffset()
+    local s = self.shakeStrength or 0
+    if s <= 0 then return 0, 0 end
+
+    -- Two-axis wobble, tuned to feel "impact-ish" rather than purely circular.
+    local dx = math.sin(self.shakePhase) * s
+    local dy = math.cos(self.shakePhase * 1.37) * s * (self.shakeCfg.yScale or 1)
+    return dx, dy
 end
 
 function Play:update(dt)
@@ -39,6 +97,8 @@ function Play:update(dt)
     if self.pause then
         return
     end
+
+    self:updateShake(dt)
 
     if self.hoem.health < 0 then
         Screen:change('GameOver')
@@ -96,6 +156,7 @@ function Play:update(dt)
     for k, mob in pairs(self.mobs) do
         if mob:collides(self.hoem) then
             self.hoem:takeDamage(1)
+            self:triggerShake(self.shakeCfg.hitPower)
             mob:exit()
         end
 
