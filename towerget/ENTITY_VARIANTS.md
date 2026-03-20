@@ -13,8 +13,10 @@ The goal of this document is to define a consistent rule for *how to add new var
   - `self.hoem` (created once)
 - `Block:update(dt)` is the source of truth for firing:
   - it accumulates `self.fire`
-  - when `self.fire >= self.speed`, it spawns new `Projectile(self.x, self.y, random_angle)`
-  - it stores them in `self.projectiles` and removes dead ones
+  - each block has `projectileType` (`homing`, `radiate`, `zapper`); defaults merge from global `ProjectileTypes` in `obj/Projectile.lua` into `self.pcfg`
+  - when `self.fire >= self.speed` and `pcfg.projectiles ~= false`, it spawns `Projectile(self.x, self.y, angle, opts)` with stats from `pcfg`
+  - `zapper` uses pulse AoE on the block instead of bullets
+  - it stores projectiles in `self.projectiles` and removes dead ones
 - `Mob:update(dt)` moves each mob toward a destination using `destx/desty`:
   - `self.x/self.y` change by `cos(angle) * self.speed * dt`, same for `y`
 - Collisions are handled by role-specific `collides(...)` calls:
@@ -43,7 +45,7 @@ New variants should use these fields (even if values change):
 
 - `Mob`: `x`, `y`, `destx`, `desty`, `speed`, `size`, `alive`
 - `Block`: `x`, `y`, `health`, `maxhealth`, `points`, `projectiles`, `fire`, `speed`, `healthPercent()`
-- `Projectile`: `x`, `y`, `angle`, `speed`, `size`, `duration`, `alive`
+- `Projectile`: `x`, `y`, `angle`, `speed`, `size`, `duration`, `alive`, `color` (and homing fields when applicable)
 - `Hoem`: `x`, `y`, `health`, `maxhealth`, `size`, `score`, `alive`
 
 ## Reuse-before-replace rule (the ladder)

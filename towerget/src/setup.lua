@@ -17,8 +17,8 @@ require 'screens/GameOver'
 require 'obj/Hoem'       -- the core
 require 'obj/HoemHud'    -- HUD for core (separate from shake-able world)
 require 'obj/Mob'        -- enemies
+require 'obj/Projectile' -- bullets + ProjectileTypes (before Block)
 require 'obj/Block'      -- towers
-require 'obj/Projectile' -- bullets fired by Block
 
 -- Push uses this to create the window
 WINDOW_WIDTH = 1024
