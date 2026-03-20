@@ -52,11 +52,13 @@ function Play:updateLevelFromXp()
         self.difficulty = TUNING:difficultyByLevel(self.level)
         self.mobSpawn = self.difficulty.mobSpawn
         self.mobMax = self.difficulty.mobMax
+
+        self.hoem:playLevelUp()
     end
 
     -- Keep HUD progress updated even when level doesn't change.
     self.levelXpStart, self.levelXpNext = TUNING:xpWindowForLevel(self.level)
-    self.hoemHud:setXpProgress(xp, self.levelXpStart, self.levelXpNext)
+    self.hoemHud:setXpProgress(xp, self.levelXpStart, self.levelXpNext, self.level)
 end
 
 function Play:getLevelXpProgress(xpOverride)

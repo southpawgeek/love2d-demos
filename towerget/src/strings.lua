@@ -13,6 +13,7 @@ local default = {
   S_DIED = 'You died :( Press [enter] to play again or [esc] to go back to the title.',
   S_HP = 'HP: ',
   S_XP = 'XP: ',
+  S_LVL = 'LV: ',
 }
 
 S = {
