@@ -1,13 +1,19 @@
 BlockTypes = {
+    -- First slot: homing tower — fires once per second at nearest mob in range, else random.
     ['basic'] = {
         name = 'Basic',
         size = 3,
         footprint = 3,
-        color = {1, 1, 1, 1},
+        color = {0.55, 0.95, 1, 1},
         maxhealth = 10,
         health = 10,
         points = 5,
-        speed = 0.2,
+        speed = 1.0, -- fire interval (seconds); 1 shot per second
+        homing = true,
+        homingRadius = 100, -- virtual pixels from block center
+        homingTurnRate = 9,
+        projectileDuration = 1.4,
+        projectileSpeed = 32,
     },
     ['medium'] = {
         name = 'Medium',
@@ -32,6 +38,31 @@ BlockTypes = {
 }
 
 Block = Class {}
+
+--- @param cx number block center x
+--- @param cy number block center y
+--- @param mobs table mob list (mob.x, mob.y = center)
+--- @param radius number max distance to target
+--- @return Mob|nil
+function Block.findClosestMobInRange(cx, cy, mobs, radius)
+    if not mobs then return nil end
+    local r2 = radius * radius
+    local best, bestD2 = nil, nil
+    for _, mob in pairs(mobs) do
+        if mob.alive then
+            local dx = mob.x - cx
+            local dy = mob.y - cy
+            local d2 = dx * dx + dy * dy
+            if d2 <= r2 then
+                if best == nil or d2 < bestD2 then
+                    best = mob
+                    bestD2 = d2
+                end
+            end
+        end
+    end
+    return best
+end
 
 function Block:init(x, y, variant)
     self.x = x
@@ -64,7 +95,7 @@ function Block:render()
     end
 end
 
-function Block:update(dt)
+function Block:update(dt, mobs)
     -- remove dead projectiles
     for k, projectile in pairs(self.projectiles) do
         projectile:update(dt)
@@ -76,8 +107,26 @@ function Block:update(dt)
     self.fire = self.fire + dt
     -- fire new projectile
     if self.fire >= self.speed then
-        local random_angle = math.random() * math.pi * 2
-        table.insert(self.projectiles, Projectile(self.x, self.y, random_angle))
+        local angle = math.random() * math.pi * 2
+        local cfg = self.config
+        local opts = nil
+
+        if cfg.homing then
+            local radius = cfg.homingRadius or 100
+            local target = Block.findClosestMobInRange(self.x, self.y, mobs, radius)
+            if target then
+                angle = math.atan2(target.y - self.y, target.x - self.x)
+            end
+            opts = {
+                homing = true,
+                targetMob = target,
+                turnRate = cfg.homingTurnRate or 7,
+                duration = cfg.projectileDuration or 1.2,
+                speed = cfg.projectileSpeed or 30,
+            }
+        end
+
+        table.insert(self.projectiles, Projectile(self.x, self.y, angle, opts))
         self.fire = 0
     end
 end

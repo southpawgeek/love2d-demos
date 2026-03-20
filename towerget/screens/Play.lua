@@ -264,7 +264,7 @@ function Play:update(dt)
 
         -- Advance projectiles for this frame before collision checks, so what you see
         -- aligns with the projectile positions used for hits.
-        block:update(dt)
+        block:update(dt, self.mobs)
 
         -- checks for mobs hitting blocks
         for j, mob in pairs(self.mobs) do
