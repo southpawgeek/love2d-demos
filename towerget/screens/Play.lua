@@ -264,7 +264,12 @@ function Play:update(dt)
 
         -- Advance projectiles for this frame before collision checks, so what you see
         -- aligns with the projectile positions used for hits.
-        block:update(dt, self.mobs)
+        block:update(dt, self.mobs, {
+            onMobKill = function()
+                self.hoem.score = self.hoem.score + 1
+                self.hoem:playXpPickup(self:getLevelXpProgress(self.hoem.score))
+            end,
+        })
 
         -- checks for mobs hitting blocks
         for j, mob in pairs(self.mobs) do
