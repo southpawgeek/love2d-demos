@@ -142,14 +142,16 @@ end
 function Play:renderBlockSelector()
     local blockSize = 24
     local padding = 8
-    local totalWidth = (#self.variantNames * (blockSize + padding)) - padding
-    local startX = (VIRTUAL_WIDTH - totalWidth) / 2
-    local bottomY = VIRTUAL_HEIGHT - 60
+    local totalHeight = (#self.variantNames * (blockSize + padding)) - padding
+    
+    -- Position at left side, just under HP/XP display
+    local leftX = 10
+    local topY = 25
     
     for i, variantName in ipairs(self.variantNames) do
         local variant = BlockTypes[string.lower(variantName)]
-        local x = startX + (i - 1) * (blockSize + padding)
-        local y = bottomY
+        local x = leftX
+        local y = topY + (i - 1) * (blockSize + padding)
         
         -- Draw block representation
         love.graphics.setColor(variant.color[1], variant.color[2], variant.color[3], variant.color[4])
