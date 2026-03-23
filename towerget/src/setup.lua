@@ -21,8 +21,8 @@ require 'obj/Projectile' -- bullets + ProjectileTypes (before Block)
 require 'obj/Block'      -- towers
 
 -- Push uses this to create the window
-WINDOW_WIDTH = 1024
-WINDOW_HEIGHT = 576
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 600
 
 -- normalized delta time
 NDT = 0
@@ -38,8 +38,8 @@ REFRESH = 0
 TITLE = 'Tower Get'
 
 -- the game gets scaled to this resolution
-VIRTUAL_WIDTH = 512
-VIRTUAL_HEIGHT = 288
+VIRTUAL_WIDTH = 360
+VIRTUAL_HEIGHT = 180
 
 -- mouse button constants
 PRIMARY_BUTTON = 1   -- usually left-click unless OS settings alter it
